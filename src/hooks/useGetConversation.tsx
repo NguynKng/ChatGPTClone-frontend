@@ -8,28 +8,25 @@ export const useGetConversations = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-    // If already fetched, don't fetch again
-    if (conversations.length > 0) return;
+    if (!user) return;
 
     const fetchConversations = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const response = await getConversations();
 
         if (response.data.success) {
           setConversations(response.data.data || []);
         } else {
-          setError(response.data.message || "Không thể tải thông báo");
+          setError(response.data.message || "Không thể tải danh sách hội thoại");
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Có lỗi xảy ra khi tải thông báo");
+          setError("Có lỗi xảy ra khi tải danh sách hội thoại");
         }
       } finally {
         setLoading(false);
@@ -37,7 +34,7 @@ export const useGetConversations = () => {
     };
 
     fetchConversations();
-  }, [setConversations, conversations.length, user]);
+  }, [user, setConversations]); // 👈 thêm `query` vào dependency
 
   return {
     conversations,
